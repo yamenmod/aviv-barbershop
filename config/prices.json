@@ -1,0 +1,18 @@
+{
+  "_note": "Example prices only. Owner approval is required before publishing.",
+  "men": [
+    {"key": "mensCut", "price": "₪70"},
+    {"key": "kidsCut", "price": "₪60"},
+    {"key": "beard", "price": "₪40"},
+    {"key": "cutBeard", "price": "₪100"}
+  ],
+  "women": [
+    {"key": "womensCut", "price": "החל מ-₪120"},
+    {"key": "blowDry", "price": "החל מ-₪80"},
+    {"key": "roots", "price": "החל מ-₪180"},
+    {"key": "fullColor", "price": "החל מ-₪250"},
+    {"key": "highlights", "price": "החל מ-₪350"},
+    {"key": "balayage", "price": "מחיר בייעוץ"},
+    {"key": "treatment", "price": "החל מ-₪150"}
+  ]
+}
