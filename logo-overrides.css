@@ -18,7 +18,7 @@
 
 .site-header {
   height: auto;
-  min-height: 145px;
+  min-height: 120px;
   padding: 18px 5vw 16px;
   flex-direction: column;
   justify-content: flex-start;
@@ -32,7 +32,7 @@
 }
 
 .brand-logo {
-  width: min(200px, 42vw);
+  width: min(150px, 36vw);
   height: auto;
   display: block;
   background: transparent;
@@ -72,7 +72,7 @@
   }
 
   .brand-logo {
-    width: min(150px, 42vw);
+    width: min(115px, 32vw);
     height: auto;
   }
 
