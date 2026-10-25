@@ -44,6 +44,35 @@ function renderPrices() {
   });
 }
 
+const hoursSchedule = [
+  { key: 'sun', day: 0, open: '08:30', close: '19:00' },
+  { key: 'mon', day: 1, closed: true },
+  { key: 'tue', day: 2, open: '08:30', close: '19:00' },
+  { key: 'wed', day: 3, open: '08:30', close: '16:00' },
+  { key: 'thu', day: 4, open: '08:30', close: '19:00' },
+  { key: 'fri', day: 5, open: '08:00', close: '15:30' },
+  { key: 'sat', day: 6, closed: true }
+];
+
+function renderHours() {
+  const list = document.querySelector('[data-hours-list]');
+  const status = document.querySelector('[data-hours-status]');
+  if (!list || !activeLocale) return;
+  const parts = new Intl.DateTimeFormat('en-US', { timeZone: 'Asia/Jerusalem', weekday: 'short', hour: '2-digit', minute: '2-digit', hour12: false }).formatToParts(new Date());
+  const weekday = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'].indexOf(parts.find((part) => part.type === 'weekday').value);
+  const currentMinutes = Number(parts.find((part) => part.type === 'hour').value) * 60 + Number(parts.find((part) => part.type === 'minute').value);
+  const current = hoursSchedule.find((item) => item.day === weekday);
+  const isOpen = current && !current.closed && currentMinutes >= toMinutes(current.open) && currentMinutes < toMinutes(current.close);
+  status.textContent = isOpen ? activeLocale.hours.statusOpen : activeLocale.hours.statusClosed;
+  status.parentElement.classList.toggle('is-closed', !isOpen);
+  list.innerHTML = hoursSchedule.map((item) => `<div class="hours-row${item.day === weekday ? ' is-today' : ''}"><span>${activeLocale.hours.days[item.key]}</span><strong>${item.closed ? '—' : `${item.open}–${item.close}`}</strong></div>`).join('');
+}
+
+function toMinutes(value) {
+  const [hour, minute] = value.split(':').map(Number);
+  return hour * 60 + minute;
+}
+
 function setLocale(code) {
   const locale = window.localeCache[code];
   if (!locale) return;
@@ -63,8 +92,8 @@ function setLocale(code) {
   document.querySelector('.language-name').textContent = locale.name;
   languageMenu.classList.remove('open');
   languageTrigger.setAttribute('aria-expanded', 'false');
-  localStorage.setItem('aviv-locale', code);
   renderPrices();
+  renderHours();
 }
 
 window.localeCache = {};
@@ -72,7 +101,8 @@ Promise.all(Object.entries(languages).map(async ([code, language]) => {
   window.localeCache[code] = await loadJson(`locales/${language.file}.json`);
 })).then(async () => {
   priceConfig = await loadJson('config/prices.json');
-  setLocale(localStorage.getItem('aviv-locale') || 'he');
+  localStorage.removeItem('aviv-locale');
+  setLocale('he');
 }).catch((error) => console.error('Localization failed to load.', error));
 
 const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
@@ -101,3 +131,4 @@ if (!reducedMotion && window.gsap && window.ScrollTrigger) {
     .to('.scroll-cue', { opacity: 0, duration: .18 }, .3);
 }
 window.addEventListener('load', () => window.ScrollTrigger?.refresh());
+setInterval(renderHours, 60000);
